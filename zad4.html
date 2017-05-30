@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Z1-4</title>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="http://d3js.org/topojson.v1.min.js"></script>
+	</head>
+	<body>
+		<script>
+var width = 960;
+var height = 700;
+
+function zoom() {
+    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");}
+
+var color = d3.scale.quantize()
+.domain([1,16])
+.range(['black','green','yelow','blue','red']);
+
+var projection = d3.geo.mercator()
+.center([0, 10])
+.scale(6000)
+.translate([17600, 4500])
+.rotate([-180, 0]);
+var path = d3.geo.path()
+.projection(projection);
+var svg = d3.select("body").append("svg")
+.attr("width", width)
+.attr("height", height)
+.style("background", "white")
+.append("g")
+.call(d3.behavior.zoom().scaleExtent([1, 100]).on("zoom", zoom));
+
+
+d3.json("cro_regv3.json", function(error, cro) {
+var data = topojson.feature(cro, cro.objects.layer1);
+
+var print = d3.select("body").append("div");
+var tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("color", "black")
+      .style("background-color", "rgba(0,0,0,0)");
+
+var states = svg.selectAll("path.county")
+.data(data.features)
+.enter()
+.append("path")
+.attr("class", "county")
+.attr("id", function(d) { return d.id; })
+.attr("d", path) 
+.style("stroke", "gray")
+.style("stroke-width", 1)
+.style("stroke-opacity", 1)
+.on("mouseover", function(d){ print.html(d.properties.name)
+.style("visibility", "visible")
+.text(d.properties.name + ", broj gradova: " + d.properties.broj_gradova)})
+.style("fill", function(d){
+        return color(d.properties.broj_gradova);})
+
+.on("mouseover", function(d){
+        console.log(d.properties.name);
+        return tooltip
+      .style("visibility", "visible")
+      .text(d.properties.name + ", broj gradova " + d.properties.broj_gradova)
+      })
+
+.on("mousemove", function(d){
+        console.log(d.properties.name);
+          return tooltip
+        .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+        .text(d.properties.name + ", broj gradova: " + d.properties.broj_gradova);
+      })
+   
+});
+		</script>
+
+	</body>
+
+</html>
