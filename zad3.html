@@ -11,8 +11,12 @@ var width = 960;
 var height = 700;
 
 function zoom() {
-    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-  }
+    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");}
+
+var color = d3.scale.linear()
+.domain([1,5])
+.range(['red','green','yelow','blue','black']);
+
 var projection = d3.geo.mercator()
 .center([0, 10])
 .scale(6000)
@@ -44,9 +48,12 @@ var states = svg.selectAll("path.county")
 .style("stroke-width", 1)
 .style("stroke-opacity", 1)
 .on("mouseover", function(d){ print.html(d.properties.name)
-	.style("visibility", "visible")
-      .text(d.properties.name + ", broj gradova: " + d.properties.broj_gradova)
+.style("visibility", "visible")
+.text(d.properties.name + ", broj gradova: " + d.properties.broj_gradova)})
+.style("fill", function(d){
+        return color(d.properties.broj_gradova);
       })
+
 
    
 });
