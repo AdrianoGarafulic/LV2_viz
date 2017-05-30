@@ -43,8 +43,12 @@ var states = svg.selectAll("path.county")
 .style("stroke", "gray")
 .style("stroke-width", 1)
 .style("stroke-opacity", 1)
-.on("mouseover", function(d){ print.html(d.properties.name);
-});
+.on("mouseover", function(d){ print.html(d.properties.name)
+	.style("visibility", "visible")
+      .text(d.properties.name + ", broj gradova: " + d.properties.broj_gradova)
+      })
+
+   
 });
 		</script>
 
