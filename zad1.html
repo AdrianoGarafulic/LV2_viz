@@ -27,6 +27,8 @@ var svg = d3.select("body").append("svg")
 d3.json("cro_regv3.json", function(error, cro) {
 var data = topojson.feature(cro, cro.objects.layer1);
 
+var print = d3.select("body").append("div");
+
 var states = svg.selectAll("path.county")
 .data(data.features)
 .enter()
@@ -36,7 +38,9 @@ var states = svg.selectAll("path.county")
 .attr("d", path) .style("fill", "red")
 .style("stroke", "gray")
 .style("stroke-width", 1)
-.style("stroke-opacity", 1);
+.style("stroke-opacity", 1)
+.on("mouseover", function(d){ print.html(d.properties.name);
+});
 });
 		</script>
 
