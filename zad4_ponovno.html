@@ -7,6 +7,45 @@
 	</head>
 	<body>
 		<script type="text/javascript">
+			
+
+			function zom() {
+			  projection.translate(d3.event.translate).scale(d3.event.scale);
+			  g.selectAll("path").attr("d", path);
+			}
+
+			function klik(d) {
+			  var x, y, k;
+
+			    var centar = path.centroid(d);
+			    x = centar[0];
+			    y = centar[1];
+			    k = 4;
+			    centered = d;
+
+			g.selectAll("path")
+			      .classed("active", centered && function(d) { return d === centered; });
+
+			  g.transition()
+			      .duration(2000)
+			      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+			      .style("stroke-width", 1.5 / k + "px");
+
+			    x = width / 2;
+			    y = height / 2;
+			    k = 1;
+			    centered = null;
+
+			    g.transition()
+				.delay(10000)
+			      .duration(2000)
+			      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+			      .style("stroke-width", 1.5 / k + "px")
+			      .each('end',function(){
+			      });}
+
+
+
 			var width = 960;
 			var height = 700;
 
@@ -24,16 +63,30 @@
 			.attr("width", width) 
 			.attr("height", height) 
 			.style("background", "black");
-            
-            d3.select("body").append("div")
-  			.attr("id","AAAAA");
-		
+
+			d3.select("body").append("div")
+  				.attr("id","nesto");
+
+
+			var zoom = d3.behavior.zoom()
+		    .translate(projection.translate())
+		    .scale(projection.scale())
+		    .scaleExtent([height, 20 * height])
+		    .on("zoom", zom);
+
+		    var g = svg.append("g")
+			.call(zoom);
+
+		    g.append("rect")
+		    .attr("class", "background")
+		    .attr("width", width)
+		    .attr("height", height);
+
+			
 			d3.json("cro_regv3.json", function(error, cro) 
 				{ 
-				
 				var data = topojson.feature(cro, cro.objects.layer1); 
-
-				var states = svg.selectAll("path.county") 
+				var states = g.selectAll("path.county") 
 				.data(data.features) 
 				.enter() 
 				.append("path") 
@@ -44,28 +97,21 @@
 				.style("stroke", "gray") 
 				.style("stroke-width", 1) 
 				.style("stroke-opacity", 1)
-                 .on('mouseover', function(d){
-				
+ 				.on("click", klik)
+				.on('mouseover', function(d){
 
 				var g = d3.select("#zupanije");
 				d3.select(this).style({opacity:'0.5'})
 				d3.select("text").style({opacity:'1.0'});
 			
                 })
-				
 				.on('mouseout', function(d){
 				d3.select(this).style({opacity:'1.0',});
 				})
-				
-
 			var centered;
-
-
 		});
 
 
-			
-			      
 			
 
 		</script>
